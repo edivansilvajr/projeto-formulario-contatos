@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="" id="formContatos">
+        <div style="margin: 15px;">
+            <input type="text" name="" id="nome" placeholder="Digite seu nome" required>
+        </div>
+        <div>
+            <input type="hidden" name="" id="hidden" value="">
+        </div>
+        <div style="margin: 15px;">
+            <input type="submit" value="Adicionar" id="btnAdicionar">
+        </div>
+    </form>
+
+    <table border="1" style="margin: 15px;" id="tableContatos">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th colspan="2">Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <td colspan="3">
+                Nunhum dado encontrado
+            </td>
+        </tbody>
+    </table>
+
+    <script>
+
+        const listaPessoas = [];
+        const btn = document.getElementById("btnAdicionar");
+        const hidden = document.getElementById('hidden');
+
+        function verificarNomeRepetido(nome) {
+            if (listaPessoas.indexOf(nome) != -1) {
+                alert("Esse nome já está cadastrado!");
+                return true;
+            }
+            return false;
+        }
+
+        function inseriDados(nome) {
+
+            listaPessoas.push(nome);
+
+        }
+
+
+        function exibirDados() {
+            const tbody = document.getElementById("tableContatos").children.item(1);
+            tbody.innerHTML = '';
+
+            for (let i in listaPessoas) {
+                tbody.innerHTML += `
+                <tr>
+                    <td>${listaPessoas[i]}</td>
+                    <td><button onclick="return excluir(${i})">Excluir</td>
+                    <td><button onclick="return editar(${i})">Editar</td>
+                </tr>`;
+            }
+
+        }
+
+        function confirmacao(t, nome) {
+            const tipo = [
+                { cod: 0, msg: 'Tem certeza que deseja excluir?' },
+                { cod: 1, msg: 'Tem certeza que deseja editar?' }
+            ];
+            return confirm(tipo[t].msg);
+        }
+
+        function excluir(id) {
+            if (confirmacao(0)) {
+                listaPessoas.splice(id, 1);
+                exibirDados();
+            }
+
+        }
+
+        function editar(id) {
+            document.getElementById("nome").value = listaPessoas[id]
+
+            hidden.value = id;
+            btn.value = 'Salvar';
+            btn.id = 'btnSalvar';
+        }
+
+        function salvarEdicao() {
+            
+            const nome = document.getElementById('nome').value;
+            inseriDados(nome);
+            exibirDados();
+
+            document.getElementById('formContatos').reset();
+
+            btn.value = 'Adicionar';
+            btn.id = 'btnAdicionar';
+
+        }
+
+        document.getElementById("formContatos").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            if (btn.id === 'btnSalvar') {
+                salvarEdicao();
+            } else {
+                const nome = e.target.nome.value;
+                if (!verificarNomeRepetido(nome)) {
+                    inseriDados(nome);
+                }
+                exibirDados();
+                document.getElementById("formContatos").reset();
+            }
+
+        });
+
+    </script>
+</body>
+
+</html>
