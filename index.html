@@ -96,11 +96,16 @@
         }
 
         function salvarEdicao() {
-            
-            const nome = document.getElementById('nome').value;
-            inseriDados(nome);
-            exibirDados();
+            let c = confirm('Tem certeza que deseja salvar ?')
 
+            if (c) {
+                console.log('Estou aqui')
+                const nome = document.getElementById('nome').value;
+                listaPessoas.splice(hidden.value, 1, nome)
+                exibirDados();
+
+            }
+            
             document.getElementById('formContatos').reset();
 
             btn.value = 'Adicionar';
