@@ -73,8 +73,8 @@
 
         function confirmacao(t, nome) {
             const tipo = [
-                { cod: 0, msg: 'Tem certeza que deseja excluir?' },
-                { cod: 1, msg: 'Tem certeza que deseja editar?' }
+                { cod: 0, msg: 'Tem certeza que deseja excluir o nome ' + nome + '?'},
+                { cod: 1, msg: 'Tem certeza que deseja editar o nome ' + nome + '?' }
             ];
             return confirm(tipo[t].msg);
         }
@@ -99,7 +99,6 @@
             let c = confirm('Tem certeza que deseja salvar ?')
 
             if (c) {
-                console.log('Estou aqui')
                 const nome = document.getElementById('nome').value;
                 listaPessoas.splice(hidden.value, 1, nome)
                 exibirDados();
