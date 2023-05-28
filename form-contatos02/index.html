@@ -11,7 +11,10 @@
 <body>
     <form action="" id="formContatos">
         <div style="margin: 15px;">
-            <input type="text" name="" id="nome" placeholder="Digite seu nome" required>
+            <input type="text" name="" id="nome" placeholder="Digite seu nome">
+        </div>
+        <div style="margin: 15px;">
+            <input type="text" name="" id="email" placeholder="Digite seu email">
         </div>
         <div>
             <input type="hidden" name="" id="hidden" value="">
@@ -25,11 +28,12 @@
         <thead>
             <tr>
                 <th>Nome</th>
-                <th colspan="2">Ação</th>
+                <th>Email</th>
+                <th colspan="3">Ação</th>
             </tr>
         </thead>
         <tbody>
-            <td colspan="3">
+            <td colspan="4">
                 Nunhum dado encontrado
             </td>
         </tbody>
@@ -41,18 +45,20 @@
         const btn = document.getElementById("btnAdicionar");
         const hidden = document.getElementById('hidden');
 
-        function verificarNomeRepetido(nome) {
-            if (listaPessoas.indexOf(nome) != -1) {
-                alert("Esse nome já está cadastrado!");
-                return true;
+        function verificarEmailRepetido(email) {
+            for(let i in listaPessoas) {
+                if(listaPessoas[i][1] == email) {
+                    console.log(listaPessoas.indexOf(listaPessoas[i][1]))
+                    alert('Esse email já está cadastrado')
+                    return true
+                }
+                return false
             }
-            return false;
         }
 
-        function inseriDados(nome) {
-
-            listaPessoas.push(nome);
-
+        function inseriDados(nome, email) {
+            const dadosPessoas = [nome, email];
+            listaPessoas.push(dadosPessoas);
         }
 
 
@@ -63,7 +69,8 @@
             for (let i in listaPessoas) {
                 tbody.innerHTML += `
                 <tr>
-                    <td>${listaPessoas[i]}</td>
+                    <td>${listaPessoas[i][0]}</td>
+                    <td>${listaPessoas[i][1]}</td>
                     <td><button onclick="return excluir(${i})">Excluir</td>
                     <td><button onclick="return editar(${i})">Editar</td>
                 </tr>`;
@@ -73,8 +80,8 @@
 
         function confirmacao(t, nome) {
             const tipo = [
-                { cod: 0, msg: 'Tem certeza que deseja excluir o nome ' + nome + '?'},
-                { cod: 1, msg: 'Tem certeza que deseja editar o nome ' + nome + '?' }
+                { cod: 0, msg: 'Tem certeza que deseja excluir?' },
+                { cod: 1, msg: 'Tem certeza que deseja editar?' }
             ];
             return confirm(tipo[t].msg);
         }
@@ -88,23 +95,22 @@
         }
 
         function editar(id) {
-            document.getElementById("nome").value = listaPessoas[id]
+            document.getElementById("nome").value = listaPessoas[id][0]
+            document.getElementById("email").value = listaPessoas[id][1]
 
             hidden.value = id;
             btn.value = 'Salvar';
             btn.id = 'btnSalvar';
         }
 
-        function salvarEdicao() {
-            let c = confirm('Tem certeza que deseja salvar ?')
+        function salvarEdicao(nome, email) {
 
-            if (c) {
-                const nome = document.getElementById('nome').value;
-                listaPessoas.splice(hidden.value, 1, nome)
+            if (confirmacao(1)) {
+                listaPessoas[hidden.value][0] = nome;
+                listaPessoas[hidden.value][1] = email;
                 exibirDados();
-
             }
-            
+
             document.getElementById('formContatos').reset();
 
             btn.value = 'Adicionar';
@@ -114,13 +120,15 @@
 
         document.getElementById("formContatos").addEventListener("submit", function (e) {
             e.preventDefault();
-
+            const nome = e.target.nome.value;
+            const email = e.target.email.value;
+    
             if (btn.id === 'btnSalvar') {
-                salvarEdicao();
+                salvarEdicao(nome, email);
             } else {
-                const nome = e.target.nome.value;
-                if (!verificarNomeRepetido(nome)) {
-                    inseriDados(nome);
+
+                if (!verificarEmailRepetido(email)) {
+                    inseriDados(nome, email);
                 }
                 exibirDados();
                 document.getElementById("formContatos").reset();
