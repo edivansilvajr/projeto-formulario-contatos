@@ -44,6 +44,7 @@
         const listaPessoas = [];
         const btn = document.getElementById("btnAdicionar");
         const hidden = document.getElementById('hidden');
+        let antigoNome
 
         function verificarEmailRepetido(email) {
             for(let i in listaPessoas) {
@@ -80,13 +81,14 @@
 
         function confirmacao(t, nome) {
             const tipo = [
-                { cod: 0, msg: 'Tem certeza que deseja excluir?' },
-                { cod: 1, msg: 'Tem certeza que deseja editar?' }
+                { cod: 0, msg: 'Tem certeza que deseja excluir o nome ' + antigoNome + '?'},
+                { cod: 1, msg: 'Tem certeza que deseja editar o nome ' + antigoNome + '?'}
             ];
             return confirm(tipo[t].msg);
         }
 
         function excluir(id) {
+            antigoNome = listaPessoas[id][0];
             if (confirmacao(0)) {
                 listaPessoas.splice(id, 1);
                 exibirDados();
@@ -95,8 +97,9 @@
         }
 
         function editar(id) {
-            document.getElementById("nome").value = listaPessoas[id][0]
-            document.getElementById("email").value = listaPessoas[id][1]
+            document.getElementById("nome").value = listaPessoas[id][0];
+            document.getElementById("email").value = listaPessoas[id][1];
+            antigoNome = listaPessoas[id][0];
 
             hidden.value = id;
             btn.value = 'Salvar';
@@ -105,7 +108,7 @@
 
         function salvarEdicao(nome, email) {
 
-            if (confirmacao(1)) {
+            if (confirmacao(1, nome)) {
                 listaPessoas[hidden.value][0] = nome;
                 listaPessoas[hidden.value][1] = email;
                 exibirDados();
