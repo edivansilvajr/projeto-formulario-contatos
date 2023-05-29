@@ -49,7 +49,6 @@
         function verificarEmailRepetido(email) {
             for(let i in listaPessoas) {
                 if(listaPessoas[i][1] == email) {
-                    console.log(listaPessoas.indexOf(listaPessoas[i][1]))
                     alert('Esse email já está cadastrado')
                     return true
                 }
