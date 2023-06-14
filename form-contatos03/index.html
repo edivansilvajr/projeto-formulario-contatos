@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+
+
+    <title>Treino de bootstrap</title>
+</head>
+
+<body>
+
+    <div class="container mb-5">
+
+        <h1 class="mt-3">Formulário de Contatos</h1>
+
+        <form action="" id="formContatos">
+
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" name="" id="nome" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="" id="email" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="tel" name="" id="telefone" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Adicionar" class="btn btn-success" id="btnAdicionar">
+            </div>
+        </form>
+
+    </div>
+
+    <div class="container">
+
+        <table class="table table-striped table-bordered text-center" id="tableDados">
+
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th colspan="2" scope="colgroup">Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum dado cadastrado</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script>
+
+        const listaPessoas = [];
+        const btnAdicionar = document.getElementById('btnAdicionar');
+        let trTarget;
+
+        function verificarEmailRepetido(email) {
+
+            for (let i in listaPessoas) {
+                if (listaPessoas[i][1] == email) {
+                    alert('[ERRO]Este email já foi cadastrado anteriormente');
+                    return true;
+                }
+            }
+            // return false;
+        }
+
+        function inserirDados(nome, email, telefone) {
+            if (verificarEmailRepetido(email)) {
+                return;
+            }
+
+            const dadosPessoas = [nome, email, telefone]
+            listaPessoas.push(dadosPessoas)
+        }
+
+        function exibirDadosTabela() {
+            const tbody = document.getElementById('tableDados').children.item(1);
+
+            tbody.innerHTML = '';
+
+            for (let i in listaPessoas) {
+
+                tbody.innerHTML += `
+                <tr>
+                    <td>${i}</td>
+                    <td>${listaPessoas[i][0]}</td>
+                    <td>${listaPessoas[i][1]}</td>
+                    <td>${listaPessoas[i][2]}</td>
+                    <td><button class="btn btn-danger btn-sm btnExcluir" id="btnExcluir${i}">Excluir</button></td>
+                    <td><button class="btn btn-primary btn-sm btnEditar" id="btnEditar${i}">Editar</button></td>
+                </tr>`
+            }
+            excluirDadosTabela(nome);
+            editarDados();
+        }
+
+        function excluirDadosTabela() {
+            const btnExcluir = document.getElementsByClassName('btnExcluir');
+
+
+            for (let i in listaPessoas) {
+                btnExcluir[i].addEventListener('click', function (e) {
+                    const numeroId = e.target.id.substring(10, listaPessoas.lengh);
+                    if (confirm("Tem certeza que deseja excluir os dados do contato de " + listaPessoas[numeroId][0])) {
+                        listaPessoas.splice(numeroId, 1);
+                        exibirDadosTabela();
+                    }
+                });
+            }
+        }
+
+        function editarDados(nome, email, telefone) {
+            const btnEditar = document.getElementsByClassName('btnEditar');
+
+            for (let i in listaPessoas) {
+                btnEditar[i].addEventListener('click', function (e) {
+                    const numeroId = e.target.id.substring(9, listaPessoas.lengh);
+                    trTarget = numeroId;
+                    const tr = btnEditar[i].parentElement.parentElement;
+                    const inputNome = document.getElementById('nome');
+                    const inputEmail = document.getElementById('email');
+                    const inputTelefone = document.getElementById('telefone');
+
+                    inputNome.value = tr.children[1].textContent;
+                    inputEmail.value = tr.children[2].textContent;
+                    inputTelefone.value = tr.children[3].textContent;
+
+                    btnAdicionar.value = 'Salvar';
+                    btnAdicionar.id = 'btnSalvar';
+                    document.getElementById('nome').focus();
+                });
+            }
+        }
+
+        function salvarEdicao(nome, email, telefone) {
+
+            if (confirm("Tem certeza que deseja salvar esta edição?")) {
+                listaPessoas[trTarget][0] = nome;
+                listaPessoas[trTarget][1] = email;
+                listaPessoas[trTarget][2] = telefone;
+
+                btnAdicionar.value = 'Adicionar';
+                btnAdicionar.id = 'btnAdicionar';
+                document.getElementById('nome').focus();
+
+                exibirDadosTabela()
+            }
+
+
+        }
+
+        document.getElementById('formContatos').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const nome = e.target.nome.value;
+            const email = e.target.email.value;
+            const telefone = e.target.telefone.value;
+
+            if (btnAdicionar.id == 'btnAdicionar') {
+                inserirDados(nome, email, telefone);
+                exibirDadosTabela();
+                editarDados(nome, email, telefone);
+
+            } else {
+                salvarEdicao(nome, email, telefone);
+            }
+
+            document.getElementById('formContatos').reset();
+            document.getElementById('nome').focus();
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+        </script>
+</body>
+
+</html>
